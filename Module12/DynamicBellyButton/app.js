@@ -19,6 +19,32 @@ function optionChanged(newSample) {
     buildCharts(newSample);
 }
 
+function buildCharts(sample) {
+  d3.json("samples.json").then((data) => {
+    var sample_data = data.samples; 
+    var sampleDataArray = sample_data.filter(sampleObj1 => sampleObj1.id == sample);
+  //console.log(sampleDataArray); 
+
+    var sampleBacteriaResults = sampleDataArray[0].sample_values.slice(0,11).reverse();
+  console.log(sampleBacteriaResults);
+
+    var OTUs = sampleDataArray.map(otu => otu.otu_ids);
+    console.log(OTUs);
+
+    var horizontalBar = [{
+              x: sampleBacteriaResults,
+              y: ("OTU" + OTUs.toString()),
+              type: "bar",
+              orientation: 'h'
+            }];
+    var horizontalLayout = {
+        title: "Top 10 Bacterial Species (OTUs)"
+      };
+    Plotly.newPlot("bar", horizontalBar, horizontalLayout)
+      });}
+
+
+
 
 function buildMetadata(sample) {
   d3.json("samples.json").then((data) => {
@@ -34,11 +60,3 @@ function buildMetadata(sample) {
 }
 
 optionChanged(940)
-
-// const url = d3.json("samples.json").then(function(data){
-//     firstPerson = data.metadata[0];
-//     Object.entries(firstPerson).forEach(([key, value]) =>
-//     {console.log(key + ': ' + value);});  
-// });
-
-
