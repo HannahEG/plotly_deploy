@@ -17,7 +17,30 @@ function init() {
 function optionChanged(newSample) {
     buildMetadata(newSample);
     buildCharts(newSample);
+    // buildBubbleChart(newSample);
 }
+
+// function buildBubbleChart(sample) {
+//   d3.json("samples.json").then((data) => {
+//     var bubbleChart = {
+//       x: []
+//       y: []
+//       mode: 'markers',
+//       marker: {
+//         size: []
+//       } 
+//     };
+    
+//     var bubbleLayout = {
+//       title: 'Insert',
+//       showlegend: false,
+//       height: 600,
+//       width: 600
+//     };
+
+//     Plotly.newPlot('bubble', [bubbleChart], bubbleLayout)
+//   })
+// };
 
 function buildCharts(sample) {
   d3.json("samples.json").then((data) => {
@@ -28,20 +51,44 @@ function buildCharts(sample) {
     var sampleBacteriaResults = sampleDataArray[0].sample_values.slice(0,11).reverse();
   console.log(sampleBacteriaResults);
 
-    var OTUs = sampleDataArray.map(otu => otu.otu_ids);
-    console.log(OTUs);
-
+    var OTUs = [sampleDataArray[0].otu_ids.slice(0,11)];
+    var OTUstring = OTUs.forEach(otu => console.log(otu))
+    var OTUlabels = sampleDataArray[0].otu_labels//.slice(0,11);
+console.log(OTUlabels)
     var horizontalBar = [{
               x: sampleBacteriaResults,
-              y: ("OTU" + OTUs.toString()),
+              y: OTUstring,
               type: "bar",
-              orientation: 'h'
+              orientation: 'h',
+              text: [OTUstring],
+              hoverinfo: OTUlabels
             }];
     var horizontalLayout = {
         title: "Top 10 Bacterial Species (OTUs)"
       };
     Plotly.newPlot("bar", horizontalBar, horizontalLayout)
-      });}
+
+    var bubbleChart = {
+      x: OTUs,
+      y: sampleBacteriaResults,
+      mode: 'markers',
+      marker: {
+        size: sampleBacteriaResults,
+        color: OTUs
+      }
+      //type: 'scatter'
+    };
+    
+    var bubbleLayout = {
+      title: 'Insert',
+      showlegend: false,
+      height: 600,
+      width: 600
+    };
+
+    Plotly.newPlot('bubble', [bubbleChart], bubbleLayout)
+
+    });}
 
 
 
